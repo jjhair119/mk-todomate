@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, {useState} from "react";
+import Calendar from "./Calendar/Calendar.tsx";
+import Todo from "./Todo/Todo.tsx";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = function () {
+    const getDate = (): Date => {
+        return new Date();
+    }
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const nowDate = getDate();
+    const nowYear = nowDate.getFullYear();
+    const nowMonth = nowDate.getMonth();
+
+    const [selectDate, setDate] = useState<Date>(getDate());
+
+    const handleDate = (date: Date) => {
+        setDate(date);
+    }
+
+    return (
+        <div className="App">
+            <Calendar
+                onDateClick={handleDate}
+                year={nowYear}
+                month={nowMonth}
+            />
+            <Todo
+                year={selectDate.getFullYear()}
+                month={selectDate.getMonth()}
+                day={selectDate.getDate()}
+            />
+        </div>
+    )
 }
+
+// function App() {
+//
+//     const date = new Date()
+//     return (
+//         <>
+//             <Calendar year={date.getFullYear()} month={date.getMonth()}/>
+//             <Todo year={date.getFullYear()} month={date.getMonth()} date={date.getDate()}/>
+//         </>
+//     )
+// }
 
 export default App
