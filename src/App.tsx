@@ -1,7 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Calendar from "./Calendar/Calendar.tsx";
-import Todo from "./Todo/Todo.tsx";
+import TodoList from "./todo/TodoList.tsx";
 import "./App.css";
+import LocalStorageUtil, {CalendarData, CalendarDate} from "./utils/LocalStorageUtil.ts";
+import dayjs from "dayjs";
 
 const App: React.FC = function () {
     const getDate = (): Date => {
@@ -12,11 +14,18 @@ const App: React.FC = function () {
     const nowYear = nowDate.getFullYear();
     const nowMonth = nowDate.getMonth();
 
-    const [selectDate, setDate] = useState<Date>(getDate());
+    const [selectedDate, setDate] = useState<Date>(getDate());
+    const [calendarData, setCalendarData] = useState<CalendarData>(LocalStorageUtil.GetCalendarData());
+    const formattedSelectedDate = parseInt(dayjs(selectedDate).format("YYYYMMDD"));
 
     const handleDate = (date: Date) => {
         setDate(date);
     }
+
+    useEffect(() => {
+        LocalStorageUtil.SetCalendarData(calendarData);
+        console.log(calendarData);
+    }, [calendarData])
 
     return (
         <div className="App">
@@ -25,24 +34,18 @@ const App: React.FC = function () {
                 year={nowYear}
                 month={nowMonth}
             />
-            <Todo
-                year={selectDate.getFullYear()}
-                month={selectDate.getMonth()}
-                day={selectDate.getDate()}
+            <TodoList
+                year={selectedDate.getFullYear()}
+                month={selectedDate.getMonth()}
+                day={selectedDate.getDate()}
+                calendarDate={calendarData[formattedSelectedDate] || {todos: [], diary: "", emoji: ""}}
+                setCalendarDate={(calendarDate:CalendarDate) => setCalendarData({
+                    ...calendarData,
+                    [formattedSelectedDate]: calendarDate,
+                })}
             />
         </div>
     )
 }
-
-// function App() {
-//
-//     const date = new Date()
-//     return (
-//         <>
-//             <Calendar year={date.getFullYear()} month={date.getMonth()}/>
-//             <Todo year={date.getFullYear()} month={date.getMonth()} date={date.getDate()}/>
-//         </>
-//     )
-// }
 
 export default App
